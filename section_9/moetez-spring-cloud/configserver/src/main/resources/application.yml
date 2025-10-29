@@ -1,0 +1,26 @@
+spring:
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "guest"
+    password: "guest"
+  application:
+    name: "configserver"
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        #native:
+          #search-locations: file:///C:\Users\pc-pc\IdeaProjects\moetez-spring-cloud\config-repo
+        git:
+          uri: https://github.com/moetezhamemi/config-repo.git
+          default-label: main
+          clone-on-start: true
+server:
+  port: 9999
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

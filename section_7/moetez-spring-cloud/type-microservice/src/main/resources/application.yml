@@ -1,0 +1,38 @@
+spring:
+  profiles:
+    active: "prod"
+  config:
+    import: "optional:configserver:http://localhost:9999/"
+  application:
+    name: type-microservice
+  datasource:
+    url: 'jdbc:mysql://mysqldb:3306/test?useSSL=false&serverTimezone=UTC'
+    username: root
+    password: root
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  eureka:
+    client:
+      service-url:
+        defaultZone: 'http://localhost:8761/eureka/'
+
+server:
+  port: 7070
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+build:
+  version: "1.0"

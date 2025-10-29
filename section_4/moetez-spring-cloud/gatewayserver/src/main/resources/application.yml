@@ -1,0 +1,38 @@
+server:
+    port: 7073
+spring:
+    application:
+        name: gatewayserver
+    cloud:
+        config:
+            enabled: false
+        discovery:
+            enabled: true
+        gateway:
+            routes:
+                - id : r1
+                  uri : lb://TYPE-MICROSERVICE
+                  predicates:
+                      - Path=/api/types/**
+                - id: r2
+                  uri: lb://CLIENT
+                  predicates:
+                      - Path= /api/clients/**
+            discovery:
+                locator:
+                    enabled: false
+    eureka:
+        client:
+            service-url:
+                defaultZone: 'http://localhost:8761/eureka/'
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'
+    endpoint:
+        gateway:
+            access: unrestricted
+eureka:
+    instance:
+        prefer-ip-address: true

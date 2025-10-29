@@ -1,0 +1,79 @@
+services:
+  eurekaserver:
+    build: ./eurekaserver
+    container_name: eurekaserver
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
+      interval: 10s
+
+  configserver:
+    build: ./configserver
+    container_name: configserver
+    ports:
+      - "9999:9999"
+    healthcheck:
+      test: "curl --fail --silent localhost:9999/actuator/health | grep UP || exit 1"
+      interval: 10s
+
+  types-ms:
+    build: ./type-microservice
+    container_name: types-ms
+    ports:
+      - "7070:7070"
+    environment:
+      - DISCOVERY_SERVICE_URL=http://eurekaserver:8761/eureka
+      - CONFIG_SERVICE_URL=http://configserver:9999
+    healthcheck:
+      test: "curl --fail --silent localhost:7070/actuator/health | grep UP || exit 1"
+      interval: 10s
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+
+  gatewayserver:
+    build: ./gatewayserver
+    container_name: gatewayserver
+    ports:
+      - "7073:7073"
+    environment:
+      - DISCOVERY_SERVICE_URL=http://eurekaserver:8761/eureka
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+
+  types-ms2:
+    build: ./type-microservice
+    container_name: types-ms2
+    ports:
+      - "7074:7070"
+    environment:
+      - DISCOVERY_SERVICE_URL=http://eurekaserver:8761/eureka
+      - CONFIG_SERVICE_URL=http://configserver:9999
+    healthcheck:
+      test: "curl --fail --silent localhost:7074/actuator/health | grep UP || exit 1"
+      interval: 10s
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+
+  clients-ms:
+    build: ./client-microservice
+    container_name: clients-ms
+    ports:
+      - "7071:7071"
+    environment:
+      - DISCOVERY_SERVICE_URL=http://eurekaserver:8761/eureka
+      - CONFIG_SERVICE_URL=http://configserver:9999
+    depends_on:
+      eurekaserver:
+        condition: service_healthy
+      configserver:
+        condition: service_healthy
+      types-ms:
+        condition: service_healthy

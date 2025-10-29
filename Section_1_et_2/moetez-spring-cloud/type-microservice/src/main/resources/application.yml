@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: type-microservice
+  datasource:
+    url: 'jdbc:h2:mem:depdb'
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+server:
+  port: 7070
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
